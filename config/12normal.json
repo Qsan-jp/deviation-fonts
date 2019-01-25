@@ -1,0 +1,57 @@
+{
+    "target_size": 12,
+    "max_ascent" : 10,
+    "space": 3,
+    "name": "12normal",
+    "ranges": [
+         {"start": "0x20", "end": "0x7e"},
+         {"start": "0xa1", "end": "0x10d"},
+         {"start": "0x0112", "end": "0x0113"},
+         {"start": "0x012a", "end": "0x012b"},
+         {"start": "0x0132", "end": "0x0133"},
+         {"start": "0x014c", "end": "0x014d"},
+         {"start": "0x0150", "end": "0x0153"},
+         {"start": "0x0160", "end": "0x0161"},
+         {"start": "0x016a", "end": "0x016b"},
+         {"start": "0x0170", "end": "0x0171"},
+         {"start": "0x0174", "end": "0x0177"},
+         {"start": "0x017d", "end": "0x017e"},
+         {"start": "0x0218", "end": "0x021b"},
+         {"start": "0x0400", "end": "0x045f"},
+         {"start": "0x1e80", "end": "0x1e83"},
+         {"start": "0x4e00", "end": "0x9fff"}
+    ],
+    "fonts": [
+      {
+         "file": "CJK/fireflysung-1.3.0.ttf",
+         "size": 11,
+         "ranges": [
+             {"start": "0x20", "end": "0x00bf"}
+         ]
+      },
+      {
+         "file": "Misc/12override.bdf",
+         "size": 12,
+         "ranges": [
+             {"start": "0x0c0", "end": "0x4dff"}
+         ]
+      },
+      {
+         "file": "Base/UbuntuCondensed-Regular.ttf",
+         "size": 12,
+         "ranges": [
+             { "list": [
+               "0x00A8", "0x00B3", "0x0176", "0x0432", "0x043E",
+               "0x043F", "0x0442", "0x0445", "0x044B"]
+             }
+         ]
+      },
+      {
+         "file": "CJK/fireflysung-1.3.0.ttf",
+         "size": 12,
+         "ranges": [
+             {"start": "0x4e00", "end": "0x9fff", "ignore_ascent": true}
+         ]
+      }
+   ]
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from freetype import Face, FT_LOAD_RENDER, FT_LOAD_TARGET_MONO
+from freetype import Face, FT_LOAD_RENDER, FT_LOAD_TARGET_MONO, FT_FACE_FLAG_SCALABLE
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -48,11 +48,19 @@ def compare_characters(ref_bmps, new_bmps):
     plt.imshow(Z, interpolation='nearest', cmap=plt.cm.hot)
     plt.show()
 
+def get_best_size(face, size):
+    if face.face_flags & FT_FACE_FLAG_SCALABLE:
+        return size
+    return max([face.available_sizes[0].height] + [_s.height for _s in face.available_sizes if _s.height <= size])
+
 size = int(sys.argv[1], 0)
 face1 = Face(sys.argv[2])
 face2 = Face(sys.argv[3])
-face1.set_char_size( size * 64 )
-face2.set_char_size( size * 64 )
+size1 = get_best_size(face1, size)
+print size1
+size2 = get_best_size(face2, size)
+face1.set_char_size( size1 * 64 )
+face2.set_char_size( size2 * 64 )
 g1 = []
 g2 = []
 for c in sys.argv[4:]:

@@ -11,6 +11,7 @@ sub parse {
     my $chardef = {};
     my $header = "";
     while(<$fh>) {
+        next if (/^COMMENT/);
         $header .= $_ if(/^STARTFONT/ .. /^ENDPROPERTIES/);
         if(/^STARTCHAR\s+(\S+)/) {
             $char = $1;
@@ -49,7 +50,11 @@ for my $char (sort keys %$ref) {
         print "Same: $char\n";
     }
 }
-
+for my $char (sort keys %$new) {
+    if (! $ref->{$char}) {
+        print "New: $char\n";
+    }
+}
 if ($outfile) {
     open my $fh, ">", $outfile;
     print $fh $header;

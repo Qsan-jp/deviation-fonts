@@ -17,6 +17,7 @@ import sys
 import re
 import logging
 
+FONT_CACHE = []
 def main():
     parser = ArgumentParser()
     parser.add_argument("-c", "--config-file", "--cfg-file", action="store", dest="cfg_file", required=True,
@@ -52,6 +53,8 @@ def main():
         logging.info("Using TTF file: " + fontfile)
         fontsize = font.get("size", target_size+1)
         face = Face(fontfile)
+        if (fontfile, face.family_name) not in FONT_CACHE:
+            FONT_CACHE.append((fontfile, face.family_name))
         for chr_range in font.get("ranges", []):
             for char in parse_range(chr_range):
                 if ('ranges' in cfg and char not in chardata) or chardata.get(char):
@@ -61,14 +64,15 @@ def main():
                 for size in range(fontsize, target_size-8, -1):  # FIXME: Why '-8'?
                     data = get_character(
                         face, size, char,
-                        max_ascent=max_ascent, max_descent=max_descent,
-                        space=space, ignore_ascent=chr_range.get("ignore_ascent"))
+                        max_ascent=max_ascent, max_descent=max_descent, fontfile=fontfile,
+                        space=space, ignore_ascent=chr_range.get("ignore_ascent"),
+                        force=chr_range.get("force"))
                     if data:
                         chardata[char] = data
                         break
 
     for missing in [_c for _c in sorted(chardata.keys(), key=int) if not chardata[_c]]:
-        logging.warning("No character found for " + `missing`)
+        logging.info("No character found for " + `missing`)
 
     write_bdf(chardata,
               name=cfg.get("name", "deviation"),
@@ -98,6 +102,8 @@ def write_bdf(chardata, name=None, target_size=None, max_ascent=None):
     data += "RESOLUTION_Y 75\n"
     data += "RESOLUTION 75\n"
     data += "ENDPROPERTIES\n"
+    for i in range(0, len(FONT_CACHE)):
+        data += "COMMENT \"Index {}: Orig-File: '{}' Family: '{}'\"\n".format(i, FONT_CACHE[i][0], FONT_CACHE[i][1])
     data += "CHARS {}\n".format(len(matched))
     with open(name + ".bdf", "w") as _fh:
         _fh.write(data)
@@ -105,31 +111,43 @@ def write_bdf(chardata, name=None, target_size=None, max_ascent=None):
             _fh.write(chardata[char])
         _fh.write("ENDFONT\n")
 
-def get_character(face, size, c, max_ascent=None, max_descent=None, space=None, ignore_ascent=False,):
+def get_character(face, size, c, max_ascent=None, max_descent=None, space=None,
+                  ignore_ascent=False, fontfile=None, force=False):
     uc = unichr(c)
     found = False
-    face.set_char_size( size*64 )
+    max_size = max_ascent + max_descent
+    face.set_char_size( size*64 )  # Font sizes are in 1/64 of a pixel
     face.load_char(uc, FT_LOAD_RENDER | FT_LOAD_TARGET_MONO )
     rows   = face.glyph.bitmap.rows
     top    = face.glyph.bitmap_top
     ascent = top
     descent = rows - top
-    if ignore_ascent:
-        if rows > size:
-            print "Ignoring {} due to {} > {}".format(c, rows, size)
-            return
+    family = face.family_name
+    if force:
+        if rows > max_size:
+            logging.warning("Forcing too-large character '%s' %04x size %d %d > %d", family, c, size, rows, max_size)
     else:
-        if ascent > max_ascent or descent > max_descent:
-            print "Ignoring {} due to {} > {}".format(c, ascent, max_ascent);
-            return
+        if ignore_ascent:
+            if rows > max_size:
+                logging.warning("Ignoring '%s' %04x size %d due to size %d > %d", family, c, size, rows, max_size)
+                return
+        else:
+            if ascent > max_ascent:
+                logging.warning("Ignoring '%s' %04x size %d due to ascent %d > %d", family, c, size, ascent, max_ascent)
+                return
+            if descent > max_descent:
+                logging.warning("Ignoring '%s' %04x size %d due to descent %d > %d", family, c, size, descent, max_descent)
+                return
     width  = face.glyph.bitmap.width
     bitmap = face.glyph.bitmap
     pitch  = face.glyph.bitmap.pitch
-    logging.debug("(%s %02d) %05d/%04x: w:%d, a:%d, d:%d p:%d",face.family_name, size, c, c, width, ascent, descent, pitch)
+    logging.debug("(%s %02d) %05d/%04x: w:%d, a:%d, d:%d p:%d",family, size, c, c, width, ascent, descent, pitch)
     if c == 32:
         width = space
+    
     chardata = ""
     chardata += "STARTCHAR uni%04X\n" % (c)
+    chardata += "COMMENT \"Index: {} Size: {}\"\n".format(FONT_CACHE.index((fontfile, family)), size)
     chardata += "ENCODING " + `c` + "\n"
     chardata += "SWIDTH 500 0\n"
     chardata += "DWIDTH 6 0\n"
@@ -146,9 +164,6 @@ def get_character(face, size, c, max_ascent=None, max_descent=None, space=None, 
     return chardata
 
 def show_character(bitmap):
-    print bitmap.width
-    print bitmap.rows
-    print bitmap.pitch
     data = []
     for i in range(bitmap.rows):
         row = []

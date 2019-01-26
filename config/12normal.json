@@ -24,7 +24,7 @@
     ],
     "fonts": [
       {
-         "file": "Misc/12override.bdf",
+         "file": "Override/12override.bdf",
          "size": 12,
          "ranges": [
              {"start": "0x000", "end": "0x9fff"}
@@ -51,7 +51,15 @@
          "file": "CJK/wenquanyi_9pt.bdf",
          "size": 12,
          "ranges": [
-             {"start": "0x3040", "end": "0x30ff", "ignore_ascent": true}
+             {"start": "0x3040", "end": "0x30ff", "ignore_ascent": true},
+             {"list": [
+                 //Random characters used in ja translation not included in firefly
+                 "0x5024", "0x52b9", "0x5358", "0x5727", "0x5909",
+                 "0x5b9f", "0x5bfe", "0x623b", "0x629e", "0x62e1",
+                 "0x633f", "0x6442", "0x691c", "0x7d4c", "0x7d76",
+                 "0x7d9a", "0x7dd1", "0x8535", "0x8ee2", "0x9045"
+                 ], "ignore_ascent": true}
+
          ]
       },
       {

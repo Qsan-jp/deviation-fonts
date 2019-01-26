@@ -1,0 +1,29 @@
+{
+    "target_size": 23,
+    "max_ascent": 23,
+    "name": "23bold",
+    "space": 6,
+    "ranges": [
+        {"list": [ "32", "37"] },
+        {"start": "42", "end": "58"},
+        {"start": "60", "end": "62"},
+        {"start": "65", "end": "90"}
+    ],
+    "fonts": [
+      {
+         "file": "Override/23override.bdf",
+         "size": 23,
+         "ranges": [
+             {"start": "0x20", "end": "0xff"}
+         ]
+      },
+      {
+         "file": "Misc/trebucbd.ttf",
+         "size": 31,
+         "ranges": [
+             {"start": "0x20", "end": "0xff"}
+         ]
+      }
+    ]
+}
+

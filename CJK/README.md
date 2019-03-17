@@ -6,4 +6,5 @@ These fonts have optimized 11px - 16px bitmapped fonts
 * odosung-1.4.2.ttc - Open Desktop variant - version 1.4.2: https://pkgs.org/download/opendesktop-fonts
 * odosung-1.6.1.ttc - (Unofficial?) Open Desktop variant  - version 1.6.1: http://rpmfind.net/linux/RPM/mageia/6/x86_64/media/core/release/fonts-ttf-chinese-opendesktop-1.6.100-7.mga6.noarch.html
 * wqy-zenhei-0.8.38.ttc - WenQuanYi Zen Hei font (12px-16px) - version 0.8.38: http://wenq.org/wqy2/index.cgi?ZenHei(en)
-
+* sazanami-mincho.ttf - Sazanami font Mincho - sazanami 20040629: https://ja.osdn.net/projects/efont/
+* sazanami-gothic.ttf - Sazanami font Mincho - sazanami 20040629: https://ja.osdn.net/projects/efont/
